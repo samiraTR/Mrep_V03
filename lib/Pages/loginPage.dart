@@ -18,7 +18,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 List<String> dcr_visitedWithList = [];
 List<String> rxTypeList = [];
 List<String> exp_reject_reasonList = [];
- 
+
 bool offer_flag = false;
 bool? note_flag;
 bool? client_edit_flag;
@@ -57,22 +57,20 @@ class _LoginScreenState extends State<LoginScreen> {
   String? savedUserId = '';
   bool isLoading = false;
   bool timer_flag = false;
- final box=Boxes.allData();
-
+  final box = Boxes.allData();
 
   @override
   initState() {
     _getDeviceInfo();
 
+    if (box.get("CID") != null) {
+      var a = box.get("CID");
+      savedUserId = box.get('user_id');
+      setState(() {
+        _companyIdController.text = a.toString();
+      });
+    }
 
-      if (box.get("CID") != null) {
-        var a = box.get("CID");
-        savedUserId = box.get('user_id');
-        setState(() {
-          _companyIdController.text = a.toString();
-        });
-      }
-  
     print("offer flag result $offer_flag");
     super.initState();
   }
@@ -93,17 +91,16 @@ class _LoginScreenState extends State<LoginScreen> {
       deviceId = 'Failed to get deviceId.';
     }
     // All_SharePreference().setDeviceInfo(deviceId, deviceBrand, deviceModel);
-    //!Share preference 
+    //!Share preference
     // final prefs = await SharedPreferences.getInstance();
     // await prefs.setString('deviceId', deviceId);
     // await prefs.setString('deviceBrand', deviceBrand!);
     // await prefs.setString('deviceModel', deviceModel!);
 
-    //todo!   add Hive 
+    //todo!   add Hive
     box.put('deviceId', deviceId);
     box.put('deviceBrand', deviceBrand!);
     box.put('deviceModel', deviceModel!);
-  
   }
 
   @override
@@ -528,11 +525,12 @@ class _LoginScreenState extends State<LoginScreen> {
         // await prefs.setString('report_atten_url', report_atten_url);
         // //todo Add HIVe,
 
-        //todo! Start Hive  
+        //todo! Start Hive
 
-       
-
-        box.put("sync_url",sync_url,);
+        box.put(
+          "sync_url",
+          sync_url,
+        );
         box.put('report_sales_url', report_sales_url);
         box.put('report_dcr_url', report_dcr_url);
         box.put('report_rx_url', report_rx_url);
@@ -638,11 +636,10 @@ class _LoginScreenState extends State<LoginScreen> {
         bool doc_flag = userInfo['doc_flag'];
         bool doc_edit_flag = userInfo['doc_edit_flag'];
         String meter_reading_last = userInfo['meter_reading_last'] ?? '';
-        List  exp_reject_reason = userInfo['exp_reject_reason'];
-        bool exp_approval_flag = userInfo['exp_approval_flag'];
+        // List  exp_reject_reason = userInfo['exp_reject_reason'];
+        // bool exp_approval_flag = userInfo['exp_approval_flag'];
 
-
-        print("Rejected Reson is::::::$exp_reject_reason");
+        // print("Rejected Reson is::::::$exp_reject_reason");
 
         print('Last Metter Reading$meter_reading_last');
         dcr_visitedWithList.clear();
@@ -654,9 +651,9 @@ class _LoginScreenState extends State<LoginScreen> {
           rxTypeList.add(element);
         });
         exp_reject_reasonList.clear();
-        exp_reject_reason.forEach((element) {
-          exp_reject_reasonList.add(element);
-        });
+        // exp_reject_reason.forEach((element) {
+        //   exp_reject_reasonList.add(element);
+        // });
 
         print("NNNEWWW LISt is :::::::$exp_reject_reasonList");
 
@@ -768,12 +765,9 @@ class _LoginScreenState extends State<LoginScreen> {
         box.put('meter_reading_last', meter_reading_last);
         // box.put('exp_approval_flag', exp_approval_flag);
         box.put('rx_type_list', rxTypeList);
-        box.put('exp_reject_reason',exp_reject_reasonList);
+        box.put('exp_reject_reason', exp_reject_reasonList);
 
-        
-
-        All_SharePreference()
-            .setLoginDataHiave(cid, userId, password);
+        All_SharePreference().setLoginDataHiave(cid, userId, password);
 
         Hive.openBox('data').then(
           (value) {
@@ -798,7 +792,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Hive.openBox('dcrGiftListData').then((value) => value.clear());
               Hive.openBox('dcrSampleListData').then((value) => value.clear());
               Hive.openBox('dcrPpmListData').then((value) => value.clear());
-              Hive.openBox('medicineList').then((value) => value.clear());  
+              Hive.openBox('medicineList').then((value) => value.clear());
 
               Navigator.pushReplacement(
                 context,
